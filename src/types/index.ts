@@ -33,3 +33,11 @@ export interface SettingsState {
   currency: 'RUB' | 'USD' | 'EUR'
   theme: 'light' | 'dark'
 }
+
+export interface UserProfile {
+  username: string
+  transactions: Transaction[]
+  budgets: Budget[]
+  goals: Goal[]
+  categories: Category[]
+}

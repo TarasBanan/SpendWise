@@ -1,16 +1,30 @@
 <template>
   <section class="page">
-    <h1 class="page__title">Категории</h1>
-    <CardPanel title="Мои категории">
+    <h1 class="page__title">Categories</h1>
+    <CardPanel title="Your categories">
       <ul class="list-reset">
         <li v-for="item in categoriesStore.items" :key="item.id" class="list-row">
           <span>{{ item.icon }} {{ item.name }}</span>
           <span>{{ item.id }}</span>
+          <span>{{ item.colorToken }}</span>
         </li>
       </ul>
-      <BaseButton variant="surface" @click="state = 'created'">Добавить категорию</BaseButton>
-      <p class="status-line">Последнее действие: {{ state }}</p>
+      <BaseButton variant="surface" @click="state = 'created'">Create category</BaseButton>
+      <p class="status-line">Last action: {{ state }}</p>
     </CardPanel>
+
+    <div class="grid-two">
+      <CardPanel title="Templates placeholder">
+        <ul class="list-reset">
+          <li class="list-item">Freelancer template</li>
+          <li class="list-item">Family template</li>
+          <li class="list-item">Student template</li>
+        </ul>
+      </CardPanel>
+      <CardPanel title="Icon picker placeholder">
+        <p class="status-line">The icon and color picker grid will be available in this area.</p>
+      </CardPanel>
+    </div>
   </section>
 </template>
 

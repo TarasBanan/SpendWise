@@ -1,7 +1,7 @@
 <template>
   <section class="page">
-    <h1 class="page__title">Транзакции</h1>
-    <CardPanel title="Список операций">
+    <h1 class="page__title">Transactions</h1>
+    <CardPanel title="Operations list">
       <ul class="list-reset">
         <li v-for="item in transactionsStore.items" :key="item.id" class="list-row">
           <span>{{ item.title }}</span>
@@ -10,12 +10,25 @@
         </li>
       </ul>
       <div class="button-row">
-        <BaseButton variant="primary" @click="filter = 'all'">Все</BaseButton>
-        <BaseButton variant="outline" @click="filter = 'income'">Доходы</BaseButton>
-        <BaseButton variant="outline" @click="filter = 'expense'">Расходы</BaseButton>
+        <BaseButton variant="primary" @click="filter = 'all'">All</BaseButton>
+        <BaseButton variant="outline" @click="filter = 'income'">Income</BaseButton>
+        <BaseButton variant="outline" @click="filter = 'expense'">Expense</BaseButton>
       </div>
-      <p class="status-line">Фильтр: {{ filter }}</p>
+      <p class="status-line">Filter: {{ filter }}</p>
     </CardPanel>
+
+    <div class="grid-two">
+      <CardPanel title="Upcoming features placeholder">
+        <ul class="list-reset">
+          <li class="list-item">Advanced search by merchant</li>
+          <li class="list-item">Bulk edit for selected transactions</li>
+          <li class="list-item">Smart duplicate detection</li>
+        </ul>
+      </CardPanel>
+      <CardPanel title="Import placeholder">
+        <p class="status-line">CSV and bank statement import wizard will be displayed in this area.</p>
+      </CardPanel>
+    </div>
   </section>
 </template>
 

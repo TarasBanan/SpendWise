@@ -3,11 +3,13 @@ import { defineStore } from 'pinia'
 import type { Budget } from '@/types'
 
 export const useBudgetsStore = defineStore('budgets', () => {
-  const items = ref<Budget[]>([
-    { id: 'budget-food', categoryId: 'food', limit: 25000, spent: 9500 }
-  ])
+  const items = ref<Budget[]>([])
 
   const utilization = computed(() => items.value.map((item) => ({ ...item, ratio: item.limit === 0 ? 0 : item.spent / item.limit })))
 
-  return { items, utilization }
+  function setBudgets(budgets: Budget[]): void {
+    items.value = budgets
+  }
+
+  return { items, utilization, setBudgets }
 })

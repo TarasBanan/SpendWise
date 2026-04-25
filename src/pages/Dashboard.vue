@@ -20,7 +20,6 @@
       <CardPanel title="Quick actions">
         <BaseButton variant="primary" @click="openTransactionModal('income')">Add income</BaseButton>
         <BaseButton variant="surface" @click="openTransactionModal('expense')">Add expense</BaseButton>
-        <p class="status-line">Last action: {{ lastAction }}</p>
       </CardPanel>
     </div>
 
@@ -66,12 +65,7 @@
         <label class="auth-modal__label">
           Tag
           <select v-model="form.tag" class="auth-modal__input">
-            <option value="Fuel">Fuel</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Medicines">Medicines</option>
-            <option value="Transport">Transport</option>
-            <option value="Salary">Salary</option>
-            <option value="Freelance">Freelance</option>
+            <option v-for="tag in activeTags" :key="tag" :value="tag">{{ tag }}</option>
           </select>
         </label>
 
@@ -85,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import CardPanel from '@/components/common/CardPanel.vue'
 import { useFormatCurrency } from '@/composables/useFormatCurrency'
@@ -93,21 +87,26 @@ import { useFormatDate } from '@/composables/useFormatDate'
 import { useTransactionsStore } from '@/stores/transactions'
 import type { Transaction } from '@/types'
 
+const incomeTags = ['Salary', 'Debt repaid', 'Bonus', 'Gift', 'Freelance']
+const expenseTags = ['Fuel', 'Groceries', 'Medicines', 'Transport', 'Rent', 'Utilities']
+
 const transactionsStore = useTransactionsStore()
 const { formatCurrency } = useFormatCurrency()
 const { formatDate } = useFormatDate()
-const lastAction = ref('none')
 const transactionModalOpen = ref(false)
 const transactionMode = ref<'income' | 'expense'>('expense')
 
 const form = ref({
   amount: '1000',
   description: '',
-  tag: 'Groceries'
+  tag: expenseTags[0]
 })
+
+const activeTags = computed(() => (transactionMode.value === 'income' ? incomeTags : expenseTags))
 
 function openTransactionModal(mode: 'income' | 'expense'): void {
   transactionMode.value = mode
+  form.value.tag = mode === 'income' ? incomeTags[0] : expenseTags[0]
   transactionModalOpen.value = true
 }
 
@@ -138,7 +137,6 @@ function saveTransaction(): void {
   }
 
   transactionsStore.addTransaction(transaction)
-  lastAction.value = transactionMode.value === 'income' ? 'add-income' : 'add-expense'
   transactionModalOpen.value = false
 }
 </script>

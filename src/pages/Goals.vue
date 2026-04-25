@@ -10,7 +10,6 @@
         </li>
       </ul>
       <BaseButton variant="outline" @click="modalOpen = true">Add goal</BaseButton>
-      <p class="status-line">Status: {{ state }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -63,7 +62,6 @@ import { useGoalsStore } from '@/stores/goals'
 
 const goalsStore = useGoalsStore()
 const { formatDate } = useFormatDate()
-const state = ref('idle')
 const modalOpen = ref(false)
 const form = ref({ title: '', target: '10000', dueDate: '2026-12-31' })
 
@@ -82,7 +80,6 @@ function saveGoal(): void {
   })
 
   modalOpen.value = false
-  state.value = 'goal-added'
   form.value.title = ''
 }
 </script>

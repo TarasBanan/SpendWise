@@ -10,7 +10,6 @@
         </li>
       </ul>
       <BaseButton variant="surface" @click="modalOpen = true">Create category</BaseButton>
-      <p class="status-line">Last action: {{ state }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -61,7 +60,6 @@ import CardPanel from '@/components/common/CardPanel.vue'
 import { useCategoriesStore } from '@/stores/categories'
 
 const categoriesStore = useCategoriesStore()
-const state = ref('idle')
 const modalOpen = ref(false)
 const form = ref({ name: '', icon: '⛽' })
 
@@ -78,7 +76,6 @@ function createCategory(): void {
     colorToken: 'token-driven'
   })
 
-  state.value = 'created'
   modalOpen.value = false
   form.value.name = ''
 }

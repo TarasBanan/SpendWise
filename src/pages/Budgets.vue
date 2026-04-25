@@ -10,7 +10,6 @@
         </li>
       </ul>
       <BaseButton variant="primary" @click="modalOpen = true">Configure budgets</BaseButton>
-      <p class="status-line">Status: {{ status }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -58,7 +57,6 @@ import { useBudgetsStore } from '@/stores/budgets'
 
 const budgetsStore = useBudgetsStore()
 const { formatCurrency } = useFormatCurrency()
-const status = ref('idle')
 const modalOpen = ref(false)
 const form = ref({ categoryId: '', limit: '10000' })
 
@@ -75,7 +73,6 @@ function saveBudget(): void {
     spent: 0
   })
 
-  status.value = 'configured'
   modalOpen.value = false
   form.value.categoryId = ''
 }

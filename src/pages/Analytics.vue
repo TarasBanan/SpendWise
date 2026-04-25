@@ -8,6 +8,7 @@
         <BaseButton variant="surface" @click="range = 'year'">Year</BaseButton>
       </div>
       <p class="status-line">Selected range: {{ range }}</p>
+      <p class="status-line">Range transactions: {{ rangedTransactions.length }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -27,7 +28,7 @@
 
     <CardPanel title="Quick insights">
       <p class="status-line">Highest expense transaction: {{ highestExpenseTitle }}</p>
-      <p class="status-line">Transactions count: {{ transactionsStore.items.length }}</p>
+      <p class="status-line">Transactions count: {{ rangedTransactions.length }}</p>
       <p class="status-line">Average expense: {{ formatCurrency(averageExpense) }}</p>
     </CardPanel>
   </section>
@@ -40,15 +41,41 @@ import CardPanel from '@/components/common/CardPanel.vue'
 import { useFormatCurrency } from '@/composables/useFormatCurrency'
 import { useTransactionsStore } from '@/stores/transactions'
 
-const range = ref('month')
+const range = ref<'month' | 'quarter' | 'year'>('month')
 const transactionsStore = useTransactionsStore()
 const { formatCurrency } = useFormatCurrency()
 
-const incomeTotal = computed(() =>
-  transactionsStore.items.filter((item) => item.type === 'income').reduce((sum, item) => sum + item.amount, 0)
-)
+const latestTransactionDate = computed(() => {
+  if (transactionsStore.items.length === 0) {
+    return new Date()
+  }
 
-const expenseTransactions = computed(() => transactionsStore.items.filter((item) => item.type === 'expense'))
+  const max = [...transactionsStore.items].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+  return new Date(max.date)
+})
+
+const rangedTransactions = computed(() => {
+  const baseDate = latestTransactionDate.value
+  const startDate = new Date(baseDate)
+
+  if (range.value === 'month') {
+    startDate.setMonth(baseDate.getMonth() - 1)
+  }
+
+  if (range.value === 'quarter') {
+    startDate.setMonth(baseDate.getMonth() - 3)
+  }
+
+  if (range.value === 'year') {
+    startDate.setFullYear(baseDate.getFullYear() - 1)
+  }
+
+  return transactionsStore.items.filter((item) => new Date(item.date).getTime() >= startDate.getTime())
+})
+
+const incomeTotal = computed(() => rangedTransactions.value.filter((item) => item.type === 'income').reduce((sum, item) => sum + item.amount, 0))
+
+const expenseTransactions = computed(() => rangedTransactions.value.filter((item) => item.type === 'expense'))
 
 const expenseTotal = computed(() => expenseTransactions.value.reduce((sum, item) => sum + item.amount, 0))
 

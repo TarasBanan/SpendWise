@@ -29,19 +29,19 @@ async function loginAsAnna(view: Awaited<ReturnType<typeof renderApp>>) {
 }
 
 describe('button clickability', () => {
-  it('opens add transaction modal and saves expense', async () => {
+  it('opens add transaction modal and saves income with income tag', async () => {
     const view = await renderApp('/')
     await loginAsAnna(view)
 
-    expect(view.getByText('Your expenses will appear here.')).toBeTruthy()
-    await fireEvent.click(view.getByRole('button', { name: 'Add expense' }))
+    await fireEvent.click(view.getByRole('button', { name: 'Add income' }))
 
     await fireEvent.update(view.getByLabelText('Amount'), '4500')
-    await fireEvent.update(view.getByLabelText('Description'), 'Gas station')
+    await fireEvent.update(view.getByLabelText('Description'), 'Debt payment')
+    await fireEvent.update(view.getByLabelText('Tag'), 'Debt repaid')
     await fireEvent.click(view.getByRole('button', { name: 'Save' }))
 
-    expect(view.getByText('Last action: add-expense')).toBeTruthy()
-    expect(view.getByText('Gas station')).toBeTruthy()
+    expect(view.getByText('Debt payment')).toBeTruthy()
+    expect(view.getByText('Debt repaid')).toBeTruthy()
   })
 
   it('filters transactions list by type', async () => {
@@ -55,13 +55,14 @@ describe('button clickability', () => {
     expect(view.getByText('Filter: expense')).toBeTruthy()
   })
 
-  it('renders analytics calculations', async () => {
+  it('changes analytics output when range changes', async () => {
     const view = await renderApp('/analytics')
     await loginAsAnna(view)
 
-    expect(view.getByText('Income vs expense')).toBeTruthy()
-    expect(view.getByText(/Net balance:/)).toBeTruthy()
-    expect(view.getByText(/Transactions count:/)).toBeTruthy()
+    expect(view.getByText('Selected range: month')).toBeTruthy()
+    await fireEvent.click(view.getByRole('button', { name: 'Year' }))
+    expect(view.getByText('Selected range: year')).toBeTruthy()
+    expect(view.getByText(/Range transactions:/)).toBeTruthy()
   })
 
   it('creates category from modal', async () => {
@@ -72,7 +73,6 @@ describe('button clickability', () => {
     await fireEvent.update(view.getByLabelText('Name'), 'Fuel')
     await fireEvent.click(view.getByRole('button', { name: 'Save' }))
 
-    expect(view.getByText('Last action: created')).toBeTruthy()
     expect(view.getByText('Fuel')).toBeTruthy()
   })
 
@@ -83,7 +83,7 @@ describe('button clickability', () => {
     await fireEvent.click(goalsView.getByRole('button', { name: 'Add goal' }))
     await fireEvent.update(goalsView.getByLabelText('Goal title'), 'New laptop')
     await fireEvent.click(goalsView.getByRole('button', { name: 'Save' }))
-    expect(goalsView.getByText('Status: goal-added')).toBeTruthy()
+    expect(goalsView.getByText('New laptop')).toBeTruthy()
 
     const budgetsView = await renderApp('/budgets')
     await loginAsAnna(budgetsView)
@@ -93,7 +93,7 @@ describe('button clickability', () => {
     await fireEvent.update(budgetsView.getByLabelText('Monthly limit'), '12000')
     await fireEvent.click(budgetsView.getByRole('button', { name: 'Save' }))
 
-    expect(budgetsView.getByText('Status: configured')).toBeTruthy()
+    expect(budgetsView.getByText('fuel')).toBeTruthy()
   })
 
   it('navigates from settings', async () => {

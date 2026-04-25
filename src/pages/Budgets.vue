@@ -9,8 +9,8 @@
           <span>{{ Math.round(item.ratio * 100) }}%</span>
         </li>
       </ul>
-      <BaseButton variant="primary" @click="notification = 'checked'">Check overages</BaseButton>
-      <p class="status-line">Status: {{ notification }}</p>
+      <BaseButton variant="primary" @click="modalOpen = true">Configure budgets</BaseButton>
+      <p class="status-line">Status: {{ status }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -25,6 +25,27 @@
         <p class="status-line">Shared household budget controls will be rendered here later.</p>
       </CardPanel>
     </div>
+
+    <div v-if="modalOpen" class="auth-modal" role="dialog" aria-modal="true" aria-label="Configure budgets">
+      <div class="auth-modal__card">
+        <h2 class="auth-modal__title">Configure budgets</h2>
+
+        <label class="auth-modal__label">
+          Category ID
+          <input v-model="form.categoryId" class="auth-modal__input" type="text" />
+        </label>
+
+        <label class="auth-modal__label">
+          Monthly limit
+          <input v-model="form.limit" class="auth-modal__input" type="number" min="1" />
+        </label>
+
+        <div class="button-row">
+          <BaseButton variant="primary" @click="saveBudget">Save</BaseButton>
+          <BaseButton variant="outline" @click="modalOpen = false">Cancel</BaseButton>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -37,5 +58,25 @@ import { useBudgetsStore } from '@/stores/budgets'
 
 const budgetsStore = useBudgetsStore()
 const { formatCurrency } = useFormatCurrency()
-const notification = ref('idle')
+const status = ref('idle')
+const modalOpen = ref(false)
+const form = ref({ categoryId: '', limit: '10000' })
+
+function saveBudget(): void {
+  const limit = Number(form.value.limit)
+  if (form.value.categoryId.trim().length === 0 || Number.isNaN(limit) || limit <= 0) {
+    return
+  }
+
+  budgetsStore.items.unshift({
+    id: `budget-${Date.now()}`,
+    categoryId: form.value.categoryId,
+    limit,
+    spent: 0
+  })
+
+  status.value = 'configured'
+  modalOpen.value = false
+  form.value.categoryId = ''
+}
 </script>

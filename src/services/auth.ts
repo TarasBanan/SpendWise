@@ -4,9 +4,36 @@ const userProfiles: Record<string, UserProfile> = {
   Anna: {
     username: 'Anna',
     transactions: [
-      { id: 'anna-tx-1', title: 'Salary', amount: 240000, categoryId: 'salary', date: '2026-04-05', type: 'income' },
-      { id: 'anna-tx-2', title: 'Cafe', amount: 6200, categoryId: 'food', date: '2026-04-08', type: 'expense' },
-      { id: 'anna-tx-3', title: 'UX Course', amount: 18000, categoryId: 'education', date: '2026-04-12', type: 'expense' }
+      {
+        id: 'anna-tx-1',
+        title: 'Salary',
+        amount: 240000,
+        categoryId: 'salary',
+        date: '2026-04-05',
+        type: 'income',
+        description: 'Monthly payroll',
+        tag: 'Salary'
+      },
+      {
+        id: 'anna-tx-2',
+        title: 'Cafe',
+        amount: 6200,
+        categoryId: 'food',
+        date: '2026-04-08',
+        type: 'expense',
+        description: 'Lunch and coffee',
+        tag: 'Groceries'
+      },
+      {
+        id: 'anna-tx-3',
+        title: 'UX Course',
+        amount: 18000,
+        categoryId: 'education',
+        date: '2026-04-12',
+        type: 'expense',
+        description: 'Design learning',
+        tag: 'Education'
+      }
     ],
     budgets: [
       { id: 'anna-budget-food', categoryId: 'food', limit: 35000, spent: 6200 },
@@ -25,9 +52,36 @@ const userProfiles: Record<string, UserProfile> = {
   Max: {
     username: 'Max',
     transactions: [
-      { id: 'max-tx-1', title: 'Freelance', amount: 145000, categoryId: 'salary', date: '2026-04-03', type: 'income' },
-      { id: 'max-tx-2', title: 'Rent', amount: 42000, categoryId: 'housing', date: '2026-04-04', type: 'expense' },
-      { id: 'max-tx-3', title: 'Gym', amount: 4500, categoryId: 'health', date: '2026-04-09', type: 'expense' }
+      {
+        id: 'max-tx-1',
+        title: 'Freelance',
+        amount: 145000,
+        categoryId: 'salary',
+        date: '2026-04-03',
+        type: 'income',
+        description: 'Client project',
+        tag: 'Freelance'
+      },
+      {
+        id: 'max-tx-2',
+        title: 'Rent',
+        amount: 42000,
+        categoryId: 'housing',
+        date: '2026-04-04',
+        type: 'expense',
+        description: 'Apartment rent',
+        tag: 'Housing'
+      },
+      {
+        id: 'max-tx-3',
+        title: 'Gym',
+        amount: 4500,
+        categoryId: 'health',
+        date: '2026-04-09',
+        type: 'expense',
+        description: 'Monthly membership',
+        tag: 'Health'
+      }
     ],
     budgets: [
       { id: 'max-budget-housing', categoryId: 'housing', limit: 50000, spent: 42000 },

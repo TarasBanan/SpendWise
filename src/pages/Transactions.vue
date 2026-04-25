@@ -3,7 +3,7 @@
     <h1 class="page__title">Transactions</h1>
     <CardPanel title="Operations list">
       <ul class="list-reset">
-        <li v-for="item in transactionsStore.items" :key="item.id" class="list-row">
+        <li v-for="item in filteredItems" :key="item.id" class="list-row">
           <span>{{ item.title }}</span>
           <span>{{ formatCurrency(item.amount) }}</span>
           <span>{{ formatDate(item.date) }}</span>
@@ -15,6 +15,7 @@
         <BaseButton variant="outline" @click="filter = 'expense'">Expense</BaseButton>
       </div>
       <p class="status-line">Filter: {{ filter }}</p>
+      <p class="status-line">Shown records: {{ filteredItems.length }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -33,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import CardPanel from '@/components/common/CardPanel.vue'
 import { useFormatCurrency } from '@/composables/useFormatCurrency'
@@ -43,5 +44,13 @@ import { useTransactionsStore } from '@/stores/transactions'
 const transactionsStore = useTransactionsStore()
 const { formatCurrency } = useFormatCurrency()
 const { formatDate } = useFormatDate()
-const filter = ref('all')
+const filter = ref<'all' | 'income' | 'expense'>('all')
+
+const filteredItems = computed(() => {
+  if (filter.value === 'all') {
+    return transactionsStore.items
+  }
+
+  return transactionsStore.items.filter((item) => item.type === filter.value)
+})
 </script>

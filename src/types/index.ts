@@ -5,6 +5,8 @@ export interface Transaction {
   categoryId: string
   date: string
   type: 'income' | 'expense'
+  description?: string
+  tag?: string
 }
 
 export interface Category {

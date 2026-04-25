@@ -19,33 +19,5 @@ export const useTransactionsStore = defineStore('transactions', () => {
     userAddedItems.value.unshift(transaction)
   }
 
-  function addQuickTransaction(type: 'income' | 'expense'): void {
-    const now = new Date()
-    const day = `${now.getDate()}`.padStart(2, '0')
-    const month = `${now.getMonth() + 1}`.padStart(2, '0')
-    const year = `${now.getFullYear()}`
-
-    if (type === 'income') {
-      addTransaction({
-        id: `manual-income-${now.getTime()}`,
-        title: 'Manual Income',
-        amount: 25000,
-        categoryId: 'salary',
-        date: `${year}-${month}-${day}`,
-        type: 'income'
-      })
-      return
-    }
-
-    addTransaction({
-      id: `manual-expense-${now.getTime()}`,
-      title: 'Manual Expense',
-      amount: 3800,
-      categoryId: 'other',
-      date: `${year}-${month}-${day}`,
-      type: 'expense'
-    })
-  }
-
-  return { items, userAddedItems, totalIncome, totalExpense, setTransactions, addTransaction, addQuickTransaction }
+  return { items, userAddedItems, totalIncome, totalExpense, setTransactions, addTransaction }
 })

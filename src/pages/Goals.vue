@@ -9,8 +9,8 @@
           <span>{{ formatDate(item.dueDate) }}</span>
         </li>
       </ul>
-      <BaseButton variant="outline" @click="forecast = 'updated'">Update forecast</BaseButton>
-      <p class="status-line">Forecast: {{ forecast }}</p>
+      <BaseButton variant="outline" @click="modalOpen = true">Add goal</BaseButton>
+      <p class="status-line">Status: {{ state }}</p>
     </CardPanel>
 
     <div class="grid-two">
@@ -25,6 +25,32 @@
         <p class="status-line">This area will include automatic contribution recommendations.</p>
       </CardPanel>
     </div>
+
+    <div v-if="modalOpen" class="auth-modal" role="dialog" aria-modal="true" aria-label="Add goal">
+      <div class="auth-modal__card">
+        <h2 class="auth-modal__title">Add goal</h2>
+
+        <label class="auth-modal__label">
+          Goal title
+          <input v-model="form.title" class="auth-modal__input" type="text" />
+        </label>
+
+        <label class="auth-modal__label">
+          Target amount
+          <input v-model="form.target" class="auth-modal__input" type="number" min="1" />
+        </label>
+
+        <label class="auth-modal__label">
+          Due date
+          <input v-model="form.dueDate" class="auth-modal__input" type="date" />
+        </label>
+
+        <div class="button-row">
+          <BaseButton variant="primary" @click="saveGoal">Save</BaseButton>
+          <BaseButton variant="outline" @click="modalOpen = false">Cancel</BaseButton>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -37,5 +63,26 @@ import { useGoalsStore } from '@/stores/goals'
 
 const goalsStore = useGoalsStore()
 const { formatDate } = useFormatDate()
-const forecast = ref('idle')
+const state = ref('idle')
+const modalOpen = ref(false)
+const form = ref({ title: '', target: '10000', dueDate: '2026-12-31' })
+
+function saveGoal(): void {
+  const target = Number(form.value.target)
+  if (form.value.title.trim().length === 0 || Number.isNaN(target) || target <= 0) {
+    return
+  }
+
+  goalsStore.items.unshift({
+    id: `goal-${Date.now()}`,
+    title: form.value.title,
+    target,
+    current: 0,
+    dueDate: form.value.dueDate
+  })
+
+  modalOpen.value = false
+  state.value = 'goal-added'
+  form.value.title = ''
+}
 </script>

@@ -11,24 +11,72 @@
     </CardPanel>
 
     <div class="grid-two">
-      <CardPanel title="Charts placeholder">
+      <CardPanel title="Income vs expense">
+        <p>Income total: {{ formatCurrency(incomeTotal) }}</p>
+        <p>Expense total: {{ formatCurrency(expenseTotal) }}</p>
+        <p>Net balance: {{ formatCurrency(incomeTotal - expenseTotal) }}</p>
+      </CardPanel>
+      <CardPanel title="Top expense categories">
         <ul class="list-reset">
-          <li class="list-item">Pie chart by category</li>
-          <li class="list-item">Income vs expense bars</li>
-          <li class="list-item">Trend line by week</li>
+          <li v-for="item in expenseByCategory" :key="item.category" class="list-item">
+            {{ item.category }} — {{ formatCurrency(item.amount) }}
+          </li>
         </ul>
       </CardPanel>
-      <CardPanel title="Comparative analysis placeholder">
-        <p class="status-line">Period-over-period variance and anomaly cards will appear here.</p>
-      </CardPanel>
     </div>
+
+    <CardPanel title="Quick insights">
+      <p class="status-line">Highest expense transaction: {{ highestExpenseTitle }}</p>
+      <p class="status-line">Transactions count: {{ transactionsStore.items.length }}</p>
+      <p class="status-line">Average expense: {{ formatCurrency(averageExpense) }}</p>
+    </CardPanel>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import CardPanel from '@/components/common/CardPanel.vue'
+import { useFormatCurrency } from '@/composables/useFormatCurrency'
+import { useTransactionsStore } from '@/stores/transactions'
 
 const range = ref('month')
+const transactionsStore = useTransactionsStore()
+const { formatCurrency } = useFormatCurrency()
+
+const incomeTotal = computed(() =>
+  transactionsStore.items.filter((item) => item.type === 'income').reduce((sum, item) => sum + item.amount, 0)
+)
+
+const expenseTransactions = computed(() => transactionsStore.items.filter((item) => item.type === 'expense'))
+
+const expenseTotal = computed(() => expenseTransactions.value.reduce((sum, item) => sum + item.amount, 0))
+
+const expenseByCategory = computed(() => {
+  const map = new Map<string, number>()
+
+  for (const item of expenseTransactions.value) {
+    const previous = map.get(item.categoryId) ?? 0
+    map.set(item.categoryId, previous + item.amount)
+  }
+
+  return [...map.entries()].map(([category, amount]) => ({ category, amount })).sort((a, b) => b.amount - a.amount)
+})
+
+const highestExpenseTitle = computed(() => {
+  if (expenseTransactions.value.length === 0) {
+    return 'No expenses yet'
+  }
+
+  const highest = [...expenseTransactions.value].sort((a, b) => b.amount - a.amount)[0]
+  return `${highest.title} (${formatCurrency(highest.amount)})`
+})
+
+const averageExpense = computed(() => {
+  if (expenseTransactions.value.length === 0) {
+    return 0
+  }
+
+  return expenseTotal.value / expenseTransactions.value.length
+})
 </script>

@@ -38,6 +38,13 @@
     </div>
 
     <CardPanel title="Bar chart: income vs expense by period">
+      <div class="button-row">
+        <BaseButton variant="outline" @click="barScale = 'day'">Day</BaseButton>
+        <BaseButton variant="outline" @click="barScale = 'month'">Month</BaseButton>
+        <BaseButton variant="outline" @click="barScale = 'quarter'">Quarter</BaseButton>
+        <BaseButton variant="outline" @click="barScale = 'year'">Year</BaseButton>
+      </div>
+      <p class="status-line">Bar scale: {{ barScale }}</p>
       <div class="bar-chart-grid">
         <div v-for="bucket in periodBuckets" :key="bucket.label" class="bar-chart-row">
           <div class="bar-chart-label">{{ bucket.label }}</div>
@@ -97,6 +104,7 @@ const chartColors = [
 ]
 
 const range = ref<'month' | 'quarter' | 'year'>('month')
+const barScale = ref<'day' | 'month' | 'quarter' | 'year'>('month')
 const transactionsStore = useTransactionsStore()
 const { formatCurrency } = useFormatCurrency()
 
@@ -145,7 +153,7 @@ const periodBuckets = computed(() => {
 
   for (const item of rangedTransactions.value) {
     const date = new Date(item.date)
-    const label = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, '0')}`
+    const label = buildBucketLabel(date, barScale.value)
     const existing = bucketMap.get(label) ?? { income: 0, expense: 0 }
 
     if (item.type === 'income') {
@@ -192,6 +200,26 @@ const savingsRatePercent = computed(() => {
 })
 
 const savingsRateLabel = computed(() => `${savingsRatePercent.value}%`)
+
+function buildBucketLabel(date: Date, scale: 'day' | 'month' | 'quarter' | 'year'): string {
+  if (scale === 'day') {
+    const month = `${date.getMonth() + 1}`.padStart(2, '0')
+    const day = `${date.getDate()}`.padStart(2, '0')
+    return `${date.getFullYear()}-${month}-${day}`
+  }
+
+  if (scale === 'month') {
+    const month = `${date.getMonth() + 1}`.padStart(2, '0')
+    return `${date.getFullYear()}-${month}`
+  }
+
+  if (scale === 'quarter') {
+    const quarter = Math.floor(date.getMonth() / 3) + 1
+    return `${date.getFullYear()}-Q${quarter}`
+  }
+
+  return `${date.getFullYear()}`
+}
 
 function getBarWidth(value: number, maxValue: number): number {
   if (maxValue <= 0) {
